@@ -1,4 +1,4 @@
-#include <rwmp>
+#include <a_rwmp>
 #include <core>
 #include <float>
 
@@ -125,7 +125,7 @@ public OnPlayerCommandText(playerid, cmdtext[])
 		SendPlayerFormattedText(playerid,"Type: /objective : to find out what to do in this gamemode.",0);
 		SendPlayerFormattedText(playerid,"Type: /givecash [playerid] [money-amount] to send money to other players.",0);
 		SendPlayerFormattedText(playerid,"Type: /tips : to see some tips from the creator of the gamemode.", 0);
-    return 1;
+		return 1;
 	}
 	if(strcmp(cmd, "/objective", true) == 0) {
 		SendPlayerFormattedText(playerid,"This gamemode is faily open, there's no specific win / endgame conditions to meet.",0);
@@ -133,14 +133,14 @@ public OnPlayerCommandText(playerid, cmdtext[])
 		SendPlayerFormattedText(playerid,"Consequently, if you have lots of money, and you die, your killer gets your cash.",0);
 		SendPlayerFormattedText(playerid,"However, you're not forced to kill players for money, you can always gamble in the", 0);
 		SendPlayerFormattedText(playerid,"Casino's.", 0);
-    return 1;
+		return 1;
 	}
 	if(strcmp(cmd, "/tips", true) == 0) {
 		SendPlayerFormattedText(playerid,"Spawning with just a desert eagle might sound lame, however the idea of this",0);
 		SendPlayerFormattedText(playerid,"gamemode is to get some cash, get better guns, then go after whoever has the",0);
 		SendPlayerFormattedText(playerid,"most cash. Once you've got the most cash, the idea is to stay alive(with the",0);
 		SendPlayerFormattedText(playerid,"cash intact)until the game ends, simple right ?", 0);
-    return 1;
+		return 1;
 	}
 	
  	if(strcmp(cmd, "/givecash", true) == 0) {
