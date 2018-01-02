@@ -9,9 +9,9 @@
 #define COLOR_RED 0xAA3333AA
 #define COLOR_YELLOW 0xFFFF00AA
 #define COLOR_WHITE 0xFFFFFFAA
-#define PocketMoney 50000 
+#define PocketMoney 50000 // Amount player recieves on spawn.
 #define INACTIVE_PLAYER_ID 255
-#define GIVECASH_DELAY 5000 
+#define GIVECASH_DELAY 5000 // Time in ms between /givecash commands.
 
 #define NUMVALUES 4
 
@@ -28,15 +28,50 @@ forward public SendAllFormattedText(playerid, const str[], define);
 new CashScoreOld;
 new iSpawnSet[MAX_PLAYERS];
 
-new Float:gRandomPlayerSpawns[1][3] = {
-	{1705.2347,1025.6808,10.8203}
+new Float:gRandomPlayerSpawns[23][3] = {
+{1958.3783,1343.1572,15.3746},
+{2199.6531,1393.3678,10.8203},
+{2483.5977,1222.0825,10.8203},
+{2637.2712,1129.2743,11.1797},
+{2000.0106,1521.1111,17.0625},
+{2024.8190,1917.9425,12.3386},
+{2261.9048,2035.9547,10.8203},
+{2262.0986,2398.6572,10.8203},
+{2244.2566,2523.7280,10.8203},
+{2335.3228,2786.4478,10.8203},
+{2150.0186,2734.2297,11.1763},
+{2158.0811,2797.5488,10.8203},
+{1969.8301,2722.8564,10.8203},
+{1652.0555,2709.4072,10.8265},
+{1564.0052,2756.9463,10.8203},
+{1271.5452,2554.0227,10.8203},
+{1441.5894,2567.9099,10.8203},
+{1480.6473,2213.5718,11.0234},
+{1400.5906,2225.6960,11.0234},
+{1598.8419,2221.5676,11.0625},
+{1318.7759,1251.3580,10.8203},
+{1558.0731,1007.8292,10.8125},
+//{-857.0551,1536.6832,22.5870},   Out of Town Spawns
+//{817.3494,856.5039,12.7891},
+//{116.9315,1110.1823,13.6094},
+//{-18.8529,1176.0159,19.5634},
+//{-315.0575,1774.0636,43.6406},
+{1705.2347,1025.6808,10.8203}
 };
 
-new Float:gCopPlayerSpawns[1][3] = {
-	{2297.0452,2468.6743,10.8203}
+new Float:gCopPlayerSpawns[2][3] = {
+{2297.1064,2452.0115,10.8203},
+{2297.0452,2468.6743,10.8203}
 };
 
-
+//Round code stolen from mike's Manhunt :P
+//new gRoundTime = 3600000;                   // Round time - 1 hour
+//new gRoundTime = 1200000;					// Round time - 20 mins
+//new gRoundTime = 900000;					// Round time - 15 mins
+//new gRoundTime = 600000;					// Round time - 10 mins
+//new gRoundTime = 300000;					// Round time - 5 mins
+//new gRoundTime = 120000;					// Round time - 2 mins
+//new gRoundTime = 60000;					// Round time - 1 min
 
 new gActivePlayers[MAX_PLAYERS];
 new gLastGaveCash[MAX_PLAYERS];
@@ -95,7 +130,7 @@ public MoneyGrubScoreUpdate()
 
 public OnPlayerConnect(playerid)
 {
-	GameTextForPlayer(playerid,"~w~SA-MP: ~r~Las Venturas ~g~MoneyGrub",5000,5);
+	GameTextForPlayer(playerid,"~w~RW-MP: ~r~Las Venturas ~g~MoneyGrub",5000,5);
 	SendPlayerFormattedText(playerid, "Welcome to Las Venturas MoneyGrub, For help type /help.", 0);
 	gActivePlayers[playerid]++;
 	gLastGaveCash[playerid] = GetTickCount();
@@ -125,7 +160,7 @@ public OnPlayerCommandText(playerid, cmdtext[])
 		SendPlayerFormattedText(playerid,"Type: /objective : to find out what to do in this gamemode.",0);
 		SendPlayerFormattedText(playerid,"Type: /givecash [playerid] [money-amount] to send money to other players.",0);
 		SendPlayerFormattedText(playerid,"Type: /tips : to see some tips from the creator of the gamemode.", 0);
-		return 1;
+    return 1;
 	}
 	if(strcmp(cmd, "/objective", true) == 0) {
 		SendPlayerFormattedText(playerid,"This gamemode is faily open, there's no specific win / endgame conditions to meet.",0);
@@ -133,14 +168,14 @@ public OnPlayerCommandText(playerid, cmdtext[])
 		SendPlayerFormattedText(playerid,"Consequently, if you have lots of money, and you die, your killer gets your cash.",0);
 		SendPlayerFormattedText(playerid,"However, you're not forced to kill players for money, you can always gamble in the", 0);
 		SendPlayerFormattedText(playerid,"Casino's.", 0);
-		return 1;
+    return 1;
 	}
 	if(strcmp(cmd, "/tips", true) == 0) {
 		SendPlayerFormattedText(playerid,"Spawning with just a desert eagle might sound lame, however the idea of this",0);
 		SendPlayerFormattedText(playerid,"gamemode is to get some cash, get better guns, then go after whoever has the",0);
 		SendPlayerFormattedText(playerid,"most cash. Once you've got the most cash, the idea is to stay alive(with the",0);
 		SendPlayerFormattedText(playerid,"cash intact)until the game ends, simple right ?", 0);
-		return 1;
+    return 1;
 	}
 	
  	if(strcmp(cmd, "/givecash", true) == 0) {
@@ -243,6 +278,54 @@ public OnPlayerDeath(playerid, killerid, reason)
  	return 1;
 }
 
+/* public OnPlayerDeath(playerid, killerid, reason)
+{   haxed by teh mike
+	new name[MAX_PLAYER_NAME];
+	new string[256];
+	new deathreason[20];
+	new playercash;
+	GetPlayerName(playerid, name, sizeof(name));
+	GetWeaponName(reason, deathreason, 20);
+	if (killerid == INVALID_PLAYER_ID) {
+	    switch (reason) {
+			case WEAPON_DROWN:
+			{
+                format(string, sizeof(string), "*** %s drowned.)", name);
+			}
+			default:
+			{
+			    if (strlen(deathreason) > 0) {
+					format(string, sizeof(string), "*** %s died. (%s)", name, deathreason);
+				} else {
+				    format(string, sizeof(string), "*** %s died.", name);
+				}
+			}
+		}
+	}
+	else {
+	new killer[MAX_PLAYER_NAME];
+	GetPlayerName(killerid, killer, sizeof(killer));
+	if (strlen(deathreason) > 0) {
+		format(string, sizeof(string), "*** %s killed %s. (%s)", killer, name, deathreason);
+		} else {
+				format(string, sizeof(string), "*** %s killed %s.", killer, name);
+			}
+		}
+	SendClientMessageToAll(COLOR_RED, string);
+		{
+		playercash = GetPlayerMoney(playerid);
+		if (playercash > 0)
+		{
+			GivePlayerMoney(killerid, playercash);
+			ResetPlayerMoney(playerid);
+		}
+		else
+		{
+		}
+	}
+ 	return 1;
+}*/
+
 //------------------------------------------------------------------------------------------------------
 
 public OnPlayerRequestClass(playerid, classid)
@@ -263,7 +346,7 @@ public SetupPlayerForClassSelection(playerid)
 
 public GameModeExitFunc()
 {
-//	GameModeExit();
+	GameModeExit();
 }
 
 public OnGameModeInit()
@@ -273,6 +356,21 @@ public OnGameModeInit()
 	ShowPlayerMarkers(1);
 	ShowNameTags(1);
 	
+	// 0.2.2 specific stuff
+	//DisableInteriorEnterExits();
+	//SetNameTagDrawDistance(10.0);
+	//EnableStuntBonusForAll(0);
+	
+	/* Was testing the new pickup limit.
+	new Float:pickX=2040.0520;
+	new Float:pickY=1319.2799;
+	new Float:pickZ=10.3779;
+	new x=0;
+	while(x!=400) {
+		AddStaticPickup(1272,2,pickX,pickY,pickZ);
+		pickY+=1.0;
+		x++;
+	}*/
 
 	// Player Class's
 	AddPlayerClass(265,1958.3783,1343.1572,15.3746,270.1425,0,0,24,300,-1,-1);
@@ -704,9 +802,25 @@ public OnGameModeInit()
 	// Exceeds model limit, cars need model adjustments
 	// --- uncommented
 	AddStaticVehicle(429,-237.7157,2594.8804,62.3828,178.6802,1,2); //
+	//AddStaticVehicle(431,-160.5815,2693.7185,62.2031,89.4133,47,74); //
 	AddStaticVehicle(463,-196.3012,2774.4395,61.4775,303.8402,22,22); //
+	//AddStaticVehicle(483,-204.1827,2608.7368,62.6956,179.9914,1,5); //
+	//AddStaticVehicle(490,-295.4756,2674.9141,62.7434,359.3378,0,0); //
+	//AddStaticVehicle(500,-301.5293,2687.6013,62.7723,87.9509,28,119); //
+	//AddStaticVehicle(500,-301.6699,2680.3293,62.7393,89.7925,13,119); //
 	AddStaticVehicle(519,-1341.1079,-254.3787,15.0701,321.6338,1,1); //
 	AddStaticVehicle(519,-1371.1775,-232.3967,15.0676,315.6091,1,1); //
+	//AddStaticVehicle(552,-1396.2028,-196.8298,13.8434,286.2720,56,56); //
+	//AddStaticVehicle(552,-1312.4509,-284.4692,13.8417,354.3546,56,56); //
+	//AddStaticVehicle(552,-1393.5995,-521.0770,13.8441,187.1324,56,56); //
+	//AddStaticVehicle(513,-1355.6632,-488.9562,14.7157,191.2547,48,18); //
+	//AddStaticVehicle(513,-1374.4580,-499.1462,14.7482,220.4057,54,34); //
+	//AddStaticVehicle(553,-1197.8773,-489.6715,15.4841,0.4029,91,87); //
+	//AddStaticVehicle(553,1852.9989,-2385.4009,14.8827,200.0707,102,119); //
+	//AddStaticVehicle(583,1879.9594,-2349.1919,13.0875,11.0992,1,1); //
+	//AddStaticVehicle(583,1620.9697,-2431.0752,13.0951,126.3341,1,1); //
+	//AddStaticVehicle(583,1545.1564,-2409.2114,13.0953,23.5581,1,1); //
+	//AddStaticVehicle(583,1656.3702,-2651.7913,13.0874,352.7619,1,1); //
 	AddStaticVehicle(519,1642.9850,-2425.2063,14.4744,159.8745,1,1); //
 	AddStaticVehicle(519,1734.1311,-2426.7563,14.4734,172.2036,1,1); //
 	// --- uncommented end
@@ -768,6 +882,9 @@ public OnGameModeInit()
 	AddStaticPickup(371, 15, 2265.0120,1672.3837,94.9219); //para
 	AddStaticPickup(371, 15, 2265.9739,1623.4060,94.9219); //para
 
+	SetTimer("MoneyGrubScoreUpdate", 1000, 1);
+	//SetTimer("GameModeExitFunc", gRoundTime, 0);
+
 	return 1;
 }
 
@@ -803,4 +920,9 @@ strtok(const string[], &index)
 	result[index - offset] = EOS;
 	return result;
 }
+
+
+
+
+
 
